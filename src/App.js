@@ -13,46 +13,51 @@ export const App = () => {
         setOperand1("");
         setOperand2("");
         setOperator("");
-        setResult(null)
+        setResult(null);
     };
     const handleCalc = () => {
         switch (operator) {
             case "+":
-                return setResult(Number(operand1) + Number(operand2));
+                setResult(Number(operand1) + Number(operand2));
+                break;
             case "-":
-                return setResult(Number(operand1) - Number(operand2));
+                setResult(Number(operand1) - Number(operand2));
+                break;
         }
     };
 
     const handleSign = (sign) => {
-        if (operand1 && operand2 && sign === "=") {
-            setOperand2("");
-            return handleCalc();
-        }
+        if (operand1 && operand2 && sign === "=") return handleCalc();
         if (sign === "C") return handleReset();
-        const isNum = typeof sign === "number";
-        if (!operator && isNum || sign === '-') {
-            setOperand1((prev) => prev + sign);
-        } else if (operator && isNum) {
-            setOperand2((prev) => prev + sign);
-        }
-        const isOperator = isNaN(sign);
-        if (operand1 && isOperator) {
-            setOperator(sign);
+        const isNum = !isNaN(sign);
+        if (!operator) {
+            if (operand1 === "" && sign === "-") {
+                setOperand1((prev) => prev + sign);
+            } else if (isNum) {
+                setOperand1((prev) => prev + sign);
+            } else if (operand1) {
+                setOperator(sign);
+            }
+        } else {
+            if (isNum) {
+                setOperand2((prev) => prev + sign);
+            }
         }
         if (result) {
             setOperand1(result);
+            setOperand2("");
+            setOperator(sign);
             setResult(null);
         }
     };
 
-    const res = result || operand1 + operator + operand2;
+    const res = result ? result : operand1 + operator + operand2;
 
     return (
         <div className={style.content}>
             <form>
                 <input
-                    className={style.input + ' ' + (result && style['result'])}
+                    className={style.input + " " + (result && style["result"])}
                     type="text"
                     value={res}
                     disabled
